@@ -3,53 +3,50 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ステータス表示</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
       padding: 50px;
     }
-    button {
-      font-size: 16px;
-      margin: 10px;
-      padding: 10px 20px;
-      cursor: pointer;
+    #status {
+      text-align: left;
     }
   </style>
   <script>
-    function playGame(userChoice) {
-      var choices = ["グー", "チョキ", "パー"];
-      var computerChoice = choices[Math.floor(Math.random() * choices.length)];
-      
-      document.getElementById("user-choice").innerText = "あなたの選択: " + choices[userChoice - 1];
-      document.getElementById("computer-choice").innerText = "コンピュータの選択: " + computerChoice;
+    let name = "プレイヤー";
+    let intelligence = 10;
+    let strength = 15;
+    let actionPoints = 5;
 
-      var result = determineWinner(userChoice, choices.indexOf(computerChoice) + 1);
-      document.getElementById("result").innerText = "結果: " + result;
+    function updateStatus() {
+      document.getElementById('status').innerHTML = `
+        <h2>ステータス</h2>
+        <p>名前: ${name}</p>
+        <p>知能: ${intelligence}</p>
+        <p>力: ${strength}</p>
+        <p>行動力: ${actionPoints}</p>
+      `;
     }
 
-    function determineWinner(userChoice, computerChoice) {
-      if (userChoice === computerChoice) {
-        return "引き分け";
-      } else if (
-        (userChoice === 1 && computerChoice === 2) ||
-        (userChoice === 2 && computerChoice === 3) ||
-        (userChoice === 3 && computerChoice === 1)
-      ) {
-        return "あなたの勝ち";
-      } else {
-        return "コンピュータの勝ち";
-      }
+    function startGame() {
+      // フォームから名前を取得
+      name = document.getElementById('nameInput').value || "プレイヤー";
+      // ステータスを更新
+      updateStatus();
     }
+
+    window.onload = updateStatus;
   </script>
 </head>
 <body>
-  <h1>じゃんけんゲーム</h1>
-  <button onclick="playGame(1)">グー</button>
-  <button onclick="playGame(2)">チョキ</button>
-  <button onclick="playGame(3)">パー</button>
-  <div id="user-choice"></div>
-  <div id="computer-choice"></div>
-  <div id="result"></div>
+  <h1>ゲームスタート</h1>
+  <form onsubmit="startGame(); return false;">
+    <label for="nameInput">名前:</label>
+    <input type="text" id="nameInput" required>
+    <button type="submit">ゲームスタート</button>
+  </form>
+  <div id="status"></div>
 </body>
 </html>
