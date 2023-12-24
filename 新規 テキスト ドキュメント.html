@@ -1,55 +1,207 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>廣瀬と村田の闘争</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Helvetica', sans-serif;
       text-align: center;
-      padding: 50px;
+      margin: 100px;
+      background: linear-gradient(to right, violet, indigo, blue, green, yellow, orange, red); /* 虹色の背景に変更 */
+      color: #2c3e50; /* テキスト色を変更 */
     }
-    button {
-      font-size: 16px;
-      margin: 10px;
-      padding: 10px 20px;
-      cursor: pointer;
+
+    h1 {
+      font-size: 100px;
+      text-shadow: 4px 4px 4px rgba(0, 0, 0, 0.7); /* タイトルに影を追加 */
+      font-weight: bold; /* タイトルのフォントを太字に変更 */
+      color: #ecf0f1; /* タイトルの色を変更 */
+    }
+
+    form {
+      margin-top: 50px;
+    }
+
+    label {
+      font-size: 24px;
+      margin-right: 20px;
+      color: #3498db; /* ラベルの色を変更 */
+    }
+
+    input {
+      margin-right: 10px;
+    }
+
+    #game-title,
+    #character-selection-form {
+      display: block;
+    }
+
+    #game-container,
+    #victory-container,
+    #defeat-container,
+    #draw-container {
+      display: none;
+      background-color: rgba(255, 255, 255, 0.9); /* 各コンテナの背景色を半透明に変更 */
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+      color: #2c3e50; /* コンテナ内のテキスト色を変更 */
+    }
+
+    #result {
+      font-size: 24px;
+      margin-top: 20px;
+    }
+
+    #large-text {
+      font-size: 36px;
+      color: #e74c3c; /* 大きなテキストの色を変更 */
+      font-weight: bold; /* 大きなテキストのフォントを太字に変更 */
     }
   </style>
-  <script>
-    function playGame(userChoice) {
-      var choices = ["グー", "チョキ", "パー"];
-      var computerChoice = choices[Math.floor(Math.random() * choices.length)];
-      
-      document.getElementById("user-choice").innerText = "あなたの選択: " + choices[userChoice - 1];
-      document.getElementById("computer-choice").innerText = "コンピュータの選択: " + computerChoice;
+</head>
 
-      var result = determineWinner(userChoice, choices.indexOf(computerChoice) + 1);
-      document.getElementById("result").innerText = "結果: " + result;
+<body>
+  <h1 id="game-title">廣瀬と村田の闘争</h1>
+
+<form id="character-selection-form" onsubmit="selectCharacter(); return false;">
+  <label for="hirose" style="font-size: 36px; margin-right: 20px; font-weight: bold; color: black;"><input type="radio" id="hirose" name="character" value="廣瀬"> 廣瀬</label>
+  <label for="murata" style="font-size: 36px; font-weight: bold; color: black;"><input type="radio" id="murata" name="character" value="村田"> 村田</label>
+
+  <br>
+
+  <input type="submit" value="選択" style="font-size: 30px; margin-top: 10px; font-weight: bold; color: black;">
+</form>
+
+
+
+  <div id="game-container">
+    <h1>二人が出会ってしまった</h1>
+
+    <p id="large-text">あなたの名前は: <span id="selected-character"></span></p>
+
+    <p id="unselected-character"></p>
+
+    <p id="thoughtful-text"></p>
+
+    <button onclick="playJanken('rock')" id="rockBtn">グー</button>
+    <button onclick="playJanken('paper')" id="paperBtn">パー</button>
+    <button onclick="playJanken('scissors')" id="scissorsBtn">チョキ</button>
+
+    <div id="result"></div>
+  </div>
+
+  <div id="victory-container">
+    <h1>勝利の瞬間</h1>
+
+    <p id="victory-text">おめでとうございます！あなたは<span id="victory-character"></span>に勝利しました。</p>
+  </div>
+
+  <div id="defeat-container">
+    <h1>敗北の瞬間</h1>
+
+    <p id="defeat-text"><span id="defeat-character"></span>の強さに敵わず、あなたは敗北しました。</p>
+  </div>
+
+  <div id="draw-container">
+    <h1>引き分けの瞬間</h1>
+
+    <p id="draw-text">引き分けです。じゃんけんが終わり、<span id="draw-character"></span>とお互いに称えあい、仲直りしました。</p>
+  </div>
+
+  <script>
+    var gamePlayed = false;
+    var selectedCharacter;
+
+    function selectCharacter() {
+      if (gamePlayed) {
+        return;
+      }
+
+      document.getElementById('character-selection-form').style.display = 'none';
+      document.getElementById('game-title').style.display = 'none';
+
+      selectedCharacter = document.querySelector('input[name="character"]:checked').value;
+
+      document.getElementById('selected-character').innerText = selectedCharacter;
+      var unselectedCharacter = document.querySelector('input[name="character"]:not(:checked)').value;
+      document.getElementById('unselected-character').innerText = "相手の名前は: " + unselectedCharacter;
+      document.getElementById('thoughtful-text').innerText = unselectedCharacter + 'は手を真剣に考えている.';
+
+      document.getElementById('game-container').style.display = 'block';
     }
 
-    function determineWinner(userChoice, computerChoice) {
-      if (userChoice === computerChoice) {
-        return "引き分け";
-      } else if (
-        (userChoice === 1 && computerChoice === 2) ||
-        (userChoice === 2 && computerChoice === 3) ||
-        (userChoice === 3 && computerChoice === 1)
-      ) {
-        return "あなたの勝ち";
+    function playJanken(playerChoice) {
+      if (gamePlayed) {
+        return;
+      }
+
+      var choices = ['rock', 'paper', 'scissors'];
+      var computerChoice = choices[Math.floor(Math.random() * choices.length)];
+
+      var result = getJankenResult(playerChoice, computerChoice);
+      document.getElementById('result').innerText = result;
+
+      disableButtons();
+
+      gamePlayed = true;
+
+      if (result === '引き分け') {
+        showDrawScreen();
+      } else if (result === '勝ち') {
+        showVictoryScreen();
       } else {
-        return "コンピュータの勝ち";
+        showDefeatScreen();
+      }
+    }
+
+    function disableButtons() {
+      var buttons = document.getElementsByTagName('button');
+      for (var i = 0; i < buttons.length; i++) {
+        buttons[i].disabled = true;
+      }
+    }
+
+    function enableButtons() {
+      var buttons = document.getElementsByTagName('button');
+      for (var i = 0; i < buttons.length; i++) {
+        buttons[i].disabled = false;
+      }
+    }
+
+    function showVictoryScreen() {
+      document.getElementById('victory-container').style.display = 'block';
+      document.getElementById('victory-character').innerText = selectedCharacter;
+    }
+
+    function showDefeatScreen() {
+      document.getElementById('defeat-container').style.display = 'block';
+      document.getElementById('defeat-character').innerText = selectedCharacter;
+    }
+
+    function showDrawScreen() {
+      document.getElementById('draw-container').style.display = 'block';
+      document.getElementById('draw-character').innerText = selectedCharacter;
+    }
+
+    function getJankenResult(player, computer) {
+      if (player === computer) {
+        return '引き分け';
+      } else if (
+        (player === 'rock' && computer === 'scissors') ||
+        (player === 'paper' && computer === 'rock') ||
+        (player === 'scissors' && computer === 'paper')
+      ) {
+        return '勝ち';
+      } else {
+        return '負け';
       }
     }
   </script>
-</head>
-<body>
-  <h1>じゃんけんゲーム</h1>
-  <button onclick="playGame(1)">グー</button>
-  <button onclick="playGame(2)">チョキ</button>
-  <button onclick="playGame(3)">パー</button>
-  <div id="user-choice"></div>
-  <div id="computer-choice"></div>
-  <div id="result"></div>
 </body>
+
 </html>
