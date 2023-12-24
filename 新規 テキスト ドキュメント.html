@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+    button {
+      font-size: 16px;
+      margin: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+  </style>
+  <script>
+    function playGame(userChoice) {
+      var choices = ["グー", "チョキ", "パー"];
+      var computerChoice = choices[Math.floor(Math.random() * choices.length)];
+      
+      document.getElementById("user-choice").innerText = "あなたの選択: " + choices[userChoice - 1];
+      document.getElementById("computer-choice").innerText = "コンピュータの選択: " + computerChoice;
+
+      var result = determineWinner(userChoice, choices.indexOf(computerChoice) + 1);
+      document.getElementById("result").innerText = "結果: " + result;
+    }
+
+    function determineWinner(userChoice, computerChoice) {
+      if (userChoice === computerChoice) {
+        return "引き分け";
+      } else if (
+        (userChoice === 1 && computerChoice === 2) ||
+        (userChoice === 2 && computerChoice === 3) ||
+        (userChoice === 3 && computerChoice === 1)
+      ) {
+        return "あなたの勝ち";
+      } else {
+        return "コンピュータの勝ち";
+      }
+    }
+  </script>
+</head>
+<body>
+  <h1>じゃんけんゲーム</h1>
+  <button onclick="playGame(1)">グー</button>
+  <button onclick="playGame(2)">チョキ</button>
+  <button onclick="playGame(3)">パー</button>
+  <div id="user-choice"></div>
+  <div id="computer-choice"></div>
+  <div id="result"></div>
+</body>
+</html>
